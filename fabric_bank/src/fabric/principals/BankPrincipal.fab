@@ -1,0 +1,46 @@
+package fabric.principals;
+
+import fabric.util.Map;
+import fabric.Config;
+
+public class BankPrincipal extends ExternalPrincipal {
+	public BankPrincipal () {
+		super("\"1024\" player");
+	}
+
+	public static BankPrincipal{*!:} getInstance{*!:}() {
+		atomic {
+			FabricWorker cl = FabricWorker.getWorker();
+			if (cl != null) {
+				final Store store = cl.getStore(Config.appStoreName);
+				if (store != null) {
+					Map rootMap = store.getRoot();
+					if (rootMap != null) {
+						Object obj = rootMap.get(Config.appPrincipalMapKey);
+						BankPrincipal bp = null;
+						if (obj instanceof BankPrincipal) {
+							bp = (BankPrincipal) obj;
+						} else {
+							bp = new BankPrincipal@store();
+							rootMap.put(Config.appPrincipalMapKey, bp);
+						}
+
+						return bp;
+					}
+				}
+			}
+
+			return null;
+		}
+	}
+
+	// Don't much care what store is, we're going to create it where we want
+	public static BankPrincipal{⊤←} getInstance{⊤←}(Store store) {
+		return getInstance();
+	}
+
+	public boolean{this;p;this<-} delegatesTo{this->}(principal{this->} p) {
+		return p instanceof BankPrincipal || p == FabricWorker.getWorker();
+	}
+
+}

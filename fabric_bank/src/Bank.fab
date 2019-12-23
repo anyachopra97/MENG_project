@@ -1,0 +1,20 @@
+import fabricated.util.ArrayList;
+import fabricated.util.StringComparator;
+import fabricated.util.IdComparator;
+import fabric.util.PrintString;
+import fabric.util.ReadInput;
+
+/**
+ * The class Bank.
+ */
+public class Bank[principal BankPrincipal] authority(BankPrincipal) {
+
+  public ArrayList[{BankPrincipal<-}]{BankPrincipal<-} customers;
+  public transient ReadInput[{BankPrincipal<-}]{BankPrincipal<-} scanner;
+
+  public Bank{BankPrincipal<-}(ArrayList[{BankPrincipal<-}]{BankPrincipal<-} customersList){
+   this.customers = customersList;
+   this.scanner = new ReadInput[{BankPrincipal<-}]();
+ }
+
+}

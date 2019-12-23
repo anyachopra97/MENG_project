@@ -1,0 +1,46 @@
+package fabric.principals;
+
+import fabric.util.Map;
+import fabric.Config;
+
+public class ManagerPrincipal extends ExternalPrincipal {
+	public ManagerPrincipal () {
+		super("\"1024\" player");
+	}
+
+	public static ManagerPrincipal{*!:} getInstance{*!:}() {
+		atomic {
+			FabricWorker cl = FabricWorker.getWorker();
+			if (cl != null) {
+				final Store store = cl.getStore(Config.appStoreName);
+				if (store != null) {
+					Map rootMap = store.getRoot();
+					if (rootMap != null) {
+						Object obj = rootMap.get(Config.appPrincipalMapKey);
+						ManagerPrincipal mp = null;
+						if (obj instanceof ManagerPrincipal) {
+							mp = (ManagerPrincipal) obj;
+						} else {
+							mp = new ManagerPrincipal@store();
+							rootMap.put(Config.appPrincipalMapKey, mp);
+						}
+
+						return mp;
+					}
+				}
+			}
+
+			return null;
+		}
+	}
+
+	// Don't much care what store is, we're going to create it where we want
+	public static ManagerPrincipal{⊤←} getInstance{⊤←}(Store store) {
+		return getInstance();
+	}
+
+	public boolean{this;p;this<-} delegatesTo{this->}(principal{this->} p) {
+		return p instanceof ManagerPrincipal || p == FabricWorker.getWorker();
+	}
+
+}

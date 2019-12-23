@@ -1,0 +1,110 @@
+<!--
+  This is the Apache Ant build file for the FabIL Banking app
+-->
+
+<project name="fabric_bank" default="build-all" basedir=".">
+  <description>
+    Build Banking app
+  </description>
+  <property environment="env" />
+  <property file="config.properties" />
+
+  <!--
+  ****************************************************************************
+    Global properties for this build.
+  ****************************************************************************
+  -->
+
+   <import file="${fabric.home}/common.xml" />
+
+  <import file="${fabric.home}/src/lib/sif/common.xml" />
+  <import file="${fabric.home}/src/lib/collections/common.xml" />
+
+  <dirname property="bank.home" file="${ant.file.bank}" />
+
+  <!--
+  ****************************************************************************
+    Targets for cleaning up the directory tree.
+  ****************************************************************************
+  -->
+
+  <target name="clean" description="Removes generated files">
+    <delete dir="${bank.home}/classes"/>
+    <delete dir="${bank.home}/sig-classes"/>
+  </target>
+
+  <target name="clobber" depends="clean"
+          description="Removes generated files and state of stores">
+    <delete dir="${bank.home}/var"/>
+  </target>
+
+  <!--
+  ****************************************************************************
+    Compilation targets.
+  ****************************************************************************
+  -->
+
+  <target name="build" depends="build-sig,build-java, sif"
+          description="Builds the Banking app">
+
+    <fabc dest="${bank.home}/classes">
+      <arg value="-sourcepath" /> <arg value="${bank.home}/src" />
+      <arg value="-cp"         /> <arg value="/Library/Java/JavaVirtualMachines/jdk1.8.0_201.jdk/Contents/Home/jre/lib/ext/jfxrt.jar" />
+      <arg value="-cp"         /> <arg value="${bank.home}/classes" />
+      <arg value="-cp"         /> <arg pathref="lib.classpath" />
+      <arg value="-cp" /> <arg pathref="collections.classpath" />
+      <arg value="-cp"         /> <arg pathref="sif.classpath" />
+      <arg value="-addsigcp"   /> <arg pathref="sif.sigcp"/>
+      <arg value="-addsigcp" /> <arg value="${bank.home}/sig-classes" />
+      <arg value="-trusted-providers" />
+      <arg value="-explain" />
+
+      <fileset dir="${bank.home}/src" includes="**/*.fab" />
+    </fabc>
+
+    <filc dest="${bank.home}/classes">
+      <arg value="-sourcepath" /> <arg value="${bank.home}/src" />
+      <arg value="-cp"         /> <arg value="${bank.home}/classes" />
+
+      <fileset dir="${bank.home}/src" includes="**/*.fil" />
+    </filc>
+  </target>
+
+  <target name="build-java"
+      description="Builds java behind signatures">
+    <mkdir dir="${bank.home}/classes" />
+    <javac source="1.8"
+           target="1.8"
+           srcdir="${bank.home}/src-java"
+           destdir="${bank.home}/classes"
+           debug="true"
+           includeAntRuntime="false"
+           debuglevel="lines,vars,source">
+       <classpath>
+         <path refid="fabric.classpath" />
+       </classpath>
+     </javac>
+  </target>
+
+  <target name="build-sig"
+      description="Builds signature definitions">
+    <fabsigc dest="${bank.home}/sig-classes">
+      <arg value="-sourcepath" /> <arg value="${bank.home}/src" />
+
+      <arg value="-cp"         /> <arg value="${bank.home}/classes" />
+      <arg value="-cp" /> <arg pathref="collections.classpath" />
+      <arg value="-trusted-providers" />
+      <arg value="-explain" />
+
+      <fileset dir="${bank.home}/src-sig" includes="**/*.fab" />
+    </fabsigc>
+  </target>
+
+  <target name="build-all" depends="build" />
+  <target name="all" depends="build-all" />
+
+</project>
+
+<!--
+vim: ts=2 sw=2 et ai
+-->

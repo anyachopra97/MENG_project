@@ -1,0 +1,139 @@
+import fabric.principals.BankPrincipal;
+import fabric.principals.ManagerPrincipal;
+import fabric.principals.TellerPrincipal;
+
+import fabric.util.PrintString;
+import fabricated.util.ArrayList;
+import fabricated.util.StringComparator;
+import fabricated.util.IdComparator;
+import fabric.util.ReadInput;
+
+public class Application authority(BankPrincipal) {
+
+  public Bank[BankPrincipal]{BankPrincipal<-} bank;
+  public Manager[BankPrincipal]{BankPrincipal<-} manager1;
+  public Teller[BankPrincipal]{BankPrincipal<-} teller1;
+  public ArrayList[{BankPrincipal<-}]{BankPrincipal<-} customers;
+
+  /**
+	 * Runs/updates the bank
+	 */
+	public void run{BankPrincipal<-}() where caller(BankPrincipal) {
+		atomic {
+
+      PrintString[{BankPrincipal<-}]{BankPrincipal<-} p = new PrintString[{BankPrincipal<-}]();
+      PrintString[{}]{BankPrincipal<-} r = new PrintString[{}]();
+      ReadInput[{BankPrincipal<-}]{BankPrincipal<-} readinput = new ReadInput[{BankPrincipal<-}]();
+
+      final label l = new label {BankPrincipal<-};
+      if (this.store$ actsfor BankPrincipal) {
+  		  final Store bankStore = FabricWorker.getWorker().getStore("store");
+  			r.print("_________$$$___$$$");
+  			r.print("______ __$$$___$$$");
+  			r.print("_____$$$$$$$$$$$$$$$");
+  			r.print("___$$$ $$$$$$$$$$$$$$$$");
+  			r.print("__$$$$$_$$$___$$$__$$$$");
+  			r.print("_$$$$$__$$$___$$$");
+  			r.print("_$$$$$__$$$___$$$");
+  			r.print("_ $$$$$__$$$___$$$");
+  			r.print("___$$$$$$$$$$$$$$$$$$$");
+  			r.print("_____$$$$$ $$$$$$$$$$$$$$");
+  			r.print("________ $$$___$$$___$$$$$");
+  			r.print("________$$$___$$$____$$$$$");
+  			r.print("________$$$ ___$$$____$$$$$");
+  			r.print("_$$$$__ _$$$___$$$___$$$$$");
+  			r.print("__$$$$$$$$$$$$$$$$$$$$$$");
+  			r.print("____$$$$$$$$ $$$$$$$$$$");
+  			r.print("________$$$_ __$$$");
+  			r.print("________$$$__ _$$$");
+        r.print("~~Welcome to the Fabric Bank!~~");
+
+  			if (bankStore actsfor BankPrincipal) {
+          try{
+            final Store c1store = FabricWorker.getWorker().getStore("worker");
+            final Store c2store = FabricWorker.getWorker().getStore("worker2");
+            final Store c3store = FabricWorker.getWorker().getStore("worker2");
+
+      			final principal p1 = c1store.getPrincipal();
+      			final principal p2 = c2store.getPrincipal();
+            final principal p3 = c3store.getPrincipal();
+
+
+
+      			final RemoteWorker w1 = FabricWorker.getWorker().getWorker("worker");
+     	      final RemoteWorker w2 = FabricWorker.getWorker().getWorker("worker2");
+
+            r.print("Please enter your name: ");
+            String{BankPrincipal<-} customer_name = readinput.read();
+            r.print(customer_name);
+
+      	    Customer[BankPrincipal, p1]{BankPrincipal<-} customer1 = new Customer{BankPrincipal<-}@bankStore(w1, customer_name);
+      	    Customer[BankPrincipal, p2]{BankPrincipal<-} customer2 = new Customer{BankPrincipal<-}@bankStore(w2, "Alice");
+            Customer[BankPrincipal, p3]{BankPrincipal<-} customer3 = new Customer{BankPrincipal<-}@bankStore(w2, "Bob");
+
+      			this.customers = new ArrayList{BankPrincipal<-}@bankStore(new StringComparator@bankStore());
+            //Add all customers to list
+            //Can also add customers to different list to be instantiated by different Managers
+      	    this.customers.add(customer1);
+      	    this.customers.add(customer2);
+            this.customers.add(customer3);
+
+            this.bank = new Bank[BankPrincipal]@bankStore(customers);
+
+            this.teller1 = new Teller[BankPrincipal]@bankStore(customers);
+            //For future - teller should have access to a list of all customers
+            //and index based off of that list
+
+            String{BankPrincipal<-} manager_name = "Martha";
+            this.manager1 = new Manager[BankPrincipal]@bankStore(customers, manager_name);
+            this.manager1.startUsers();
+            r.print("Your manager " + manager_name + " has your account all set up! What would you like to name your account?");
+            String{BankPrincipal<-} input_name = readinput.read();
+            r.print(input_name);
+            customer1.account.account_name = input_name;
+
+            String{BankPrincipal<-} print_name = declassify (customer1.account.account_name, {BankPrincipal->p1; BankPrincipal<-} to {BankPrincipal<-});
+            r.print(customer_name + "'s account name': "+ print_name);
+            int{BankPrincipal<-} print_amount = declassify (customer1.account.account_amount, {BankPrincipal->p1; BankPrincipal<-} to {BankPrincipal<-});
+            r.print(customer_name + "'s account amount': $"+ print_amount);
+
+
+            //Give Bob and Alice some money
+            int{BankPrincipal<-} transfer1 = 250;
+            int{BankPrincipal<-} transfer2 = 4310;
+            for(int i=0; i<this.customers.size();i++){
+              Customer currCustomer = customer1;
+              if (this.customers.get(i) != currCustomer){
+                teller1.singleTransfer(i, transfer1);
+                teller1.singleTransfer(i, transfer2);
+              }
+            }
+
+
+            r.print("You'd like to transfer money from " + customer2.name + " or " + customer3.name + " for dinner last night. How much would you like to receive from each?");
+            String{BankPrincipal<-} tmp_amt = readinput.read();
+            int{BankPrincipal<-} int_tmp_amt = 25;
+            r.print("$"+ int_tmp_amt);
+
+            for(int i=0; i<this.customers.size();i++){
+              Customer currCustomer = customer1;
+              if (this.customers.get(i) != currCustomer){
+                r.print("Teller now executing transfer.");
+                teller1.dualTransfer(i, 0, int_tmp_amt);
+              }
+            }
+
+            String{BankPrincipal<-} print_name2 = declassify (customer1.account.account_name, {BankPrincipal->p1; BankPrincipal<-} to {BankPrincipal<-});
+            r.print(customer_name + "'s account name': "+ print_name2);
+            int{BankPrincipal<-} print_amount2 = declassify (customer1.account.account_amount, {BankPrincipal->p1; BankPrincipal<-} to {BankPrincipal<-});
+            r.print(customer_name + "'s account amount': $"+ print_amount2);
+
+          } catch (Exception e) {
+
+          }
+
+  		  }
+      }
+    }
+  }
+}

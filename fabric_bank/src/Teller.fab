@@ -1,0 +1,42 @@
+import fabricated.util.ArrayList;
+import fabricated.util.StringComparator;
+import fabricated.util.IdComparator;
+import fabric.util.PrintString;
+import fabric.util.ReadInput;
+
+/**
+ * The class Teller.
+ */
+public class Teller[principal BankPrincipal] authority(BankPrincipal) {
+
+  public ArrayList[{BankPrincipal<-}]{BankPrincipal<-} customers;
+  public transient ReadInput[{BankPrincipal<-}]{BankPrincipal<-} scanner;
+
+  public Teller{BankPrincipal<-}(ArrayList[{BankPrincipal<-}]{BankPrincipal<-} customersList){
+   this.customers = customersList;
+   this.scanner = new ReadInput[{BankPrincipal<-}]();
+  }
+
+  /**
+  * Transfer the desired amount of the customer at the given index.
+  */
+  public void singleTransfer{BankPrincipal<-}(int{BankPrincipal<-} index, int{BankPrincipal<-} amount){
+    atomic{
+        PrintString[{}]{BankPrincipal<-} r = new PrintString[{}]();
+        ((Customer) this.customers.get(index)).account.account_amount = ((Customer) this.customers.get(index)).account.account_amount + amount;
+    }
+  }
+
+  /**
+  * Transfer the desired amount of the customer at the given index.
+  */
+  public void dualTransfer{BankPrincipal<-}(int{BankPrincipal<-} donoridx, int{BankPrincipal<-} recieveridx, int{BankPrincipal<-} amount){
+    atomic{
+        PrintString[{}]{BankPrincipal<-} r = new PrintString[{}]();
+        ((Customer) this.customers.get(donoridx)).account.account_amount = ((Customer) this.customers.get(donoridx)).account.account_amount - amount;
+        ((Customer) this.customers.get(recieveridx)).account.account_amount = ((Customer) this.customers.get(recieveridx)).account.account_amount + amount;
+        r.print("$" + amount + " has been transferred to " + ((Customer) this.customers.get(recieveridx)).name + " from "+ ((Customer) this.customers.get(donoridx)).name);
+    }
+  }
+
+}

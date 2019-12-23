@@ -1,0 +1,16 @@
+import fabric.principals.BankPrincipal;
+
+import fabric.util.PrintString;
+import fabricated.util.ArrayList;
+import fabricated.util.StringComparator;
+import fabricated.util.IdComparator;
+
+public class Main authority(BankPrincipal){
+
+	public static void main{BankPrincipal<-} (principal{p<-} p, String[] args):{BankPrincipal<-} throws Exception where authority(BankPrincipal){
+		atomic {
+			new Application().run();
+		}
+	}
+
+}

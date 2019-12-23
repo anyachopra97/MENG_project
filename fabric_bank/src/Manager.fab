@@ -1,0 +1,33 @@
+import fabricated.util.ArrayList;
+import fabricated.util.StringComparator;
+import fabricated.util.IdComparator;
+import fabric.util.PrintString;
+import fabric.util.ReadInput;
+
+/**
+ * The class Manager.
+ */
+public class Manager[principal BankPrincipal] authority(BankPrincipal) {
+
+  public ArrayList[{BankPrincipal<-}]{BankPrincipal<-} customers;
+  public String{BankPrincipal<-} name;
+  public transient ReadInput[{BankPrincipal<-}]{BankPrincipal<-} scanner;
+
+  public Manager{BankPrincipal<-}(ArrayList[{BankPrincipal<-}]{BankPrincipal<-} customersList, String{BankPrincipal<-} name){
+   this.customers = customersList;
+   this.name = name;
+   this.scanner = new ReadInput[{BankPrincipal<-}]();
+ }
+
+  /**
+  * Initializes the accounts of all customers associated with this Manager.
+  */
+  public void startUsers{BankPrincipal<-}(){
+    atomic{
+      for(int i=0; i<this.customers.size();i++){
+        ((Customer) this.customers.get(i)).account.populateAccount();
+      }
+    }
+  }
+
+}

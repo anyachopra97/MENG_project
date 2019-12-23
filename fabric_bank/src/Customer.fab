@@ -1,0 +1,21 @@
+import fabricated.util.ArrayList;
+
+/**
+ * This class represents a customer in the Bank BankPrincipal.
+ */
+public class Customer[principal BankPrincipal, principal Customer] {
+    /**
+     * This account represents C's account.
+     * It's fine to make the reference to the account public, as all the
+     * information contained in the board is readable only by C
+     */
+    public Account[BankPrincipal, Customer]{BankPrincipal<-} account;
+    public String{BankPrincipal<-} name;
+    public RemoteWorker w;
+
+    public Customer{BankPrincipal<-}(RemoteWorker{} worker, String{BankPrincipal<-} name){ //RemoteWorker w
+      this.w = worker;
+      this.name = name;
+      this.account = new Account{BankPrincipal<-}();
+    }
+}

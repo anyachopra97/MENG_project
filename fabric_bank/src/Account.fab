@@ -1,0 +1,35 @@
+import fabricated.util.ArrayList;
+import fabricated.util.StringComparator;
+import fabric.util.PrintString;
+import fabric.util.ReadInput;
+
+/**
+ * This class represents a customers's account in the Bank.
+ */
+public class Account[principal BankPrincipal, principal Customer] authority(BankPrincipal){
+
+    //CHANGE THIS
+    public String{BankPrincipal->Customer; BankPrincipal<-} account_name;
+    public int{BankPrincipal->Customer; BankPrincipal<-} account_amount;
+
+    public Account{BankPrincipal<-}(){
+      this.account_name = "account 1";
+      this.account_amount = 0;
+    }
+
+   /**
+    * Initializes the customer with 1 random account
+    */
+    public void populateAccount{BankPrincipal<-}()
+    // This should only be called by code that has the BankPrincipal server's authority
+    where authority (BankPrincipal) {
+      atomic{
+              String{BankPrincipal->Customer; BankPrincipal<-} tmp = "account 1";
+              int{BankPrincipal<-} tmp_amt = 0;
+              this.account_name = tmp;
+              this.account_amount = tmp_amt;
+
+      }
+    }
+
+}

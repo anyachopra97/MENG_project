@@ -1,0 +1,46 @@
+package fabric.principals;
+
+import fabric.util.Map;
+import fabric.Config;
+
+public class TellerPrincipal extends ExternalPrincipal {
+	public TellerPrincipal () {
+		super("\"1024\" player");
+	}
+
+	public static TellerPrincipal{*!:} getInstance{*!:}() {
+		atomic {
+			FabricWorker cl = FabricWorker.getWorker();
+			if (cl != null) {
+				final Store store = cl.getStore(Config.appStoreName);
+				if (store != null) {
+					Map rootMap = store.getRoot();
+					if (rootMap != null) {
+						Object obj = rootMap.get(Config.appPrincipalMapKey);
+						TellerPrincipal tp = null;
+						if (obj instanceof TellerPrincipal) {
+							tp = (TellerPrincipal) obj;
+						} else {
+							tp = new TellerPrincipal@store();
+							rootMap.put(Config.appPrincipalMapKey, tp);
+						}
+
+						return tp;
+					}
+				}
+			}
+
+			return null;
+		}
+	}
+
+	// Don't much care what store is, we're going to create it where we want
+	public static TellerPrincipal{⊤←} getInstance{⊤←}(Store store) {
+		return getInstance();
+	}
+
+	public boolean{this;p;this<-} delegatesTo{this->}(principal{this->} p) {
+		return p instanceof TellerPrincipal || p == FabricWorker.getWorker();
+	}
+
+}
